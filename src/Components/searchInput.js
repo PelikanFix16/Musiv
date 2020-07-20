@@ -1,27 +1,24 @@
-import React, { useState } from "react";
+import React from "react";
 import { View, TextInput, StyleSheet } from "react-native";
+import PropTypes from "prop-types";
 
-const SearchInput = () => {
-  const [search, setSearch] = useState("");
-
-  const searchHandle = (text) => {
-    setSearch(text);
-  };
-  const submit = () => {
-    console.log(search);
-  };
-
+const SearchInput = (props) => {
   return (
     <View style={styles.mainContainer}>
       <TextInput
         style={styles.textInput}
         placeholder="Search Music"
         placeholderTextColor="white"
-        onChangeText={searchHandle}
-        onSubmitEditing={submit}
+        onChangeText={props.searchHandle}
+        onSubmitEditing={props.submit}
       />
     </View>
   );
+};
+
+SearchInput.propTypes = {
+  searchHandle: PropTypes.func,
+  submit: PropTypes.func,
 };
 
 const styles = StyleSheet.create({
