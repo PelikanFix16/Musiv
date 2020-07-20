@@ -1,21 +1,40 @@
 import React from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
+import PropTypes from "prop-types";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  TouchableHighlight,
+} from "react-native";
 
 const ItemList = (props) => {
   return (
-    <View style={styles.mainContainer}>
-      <Image
-        style={styles.tinyLogo}
-        source={{
-          uri: props.videoImage,
-        }}
-      />
-      <View style={styles.textView}>
-        <Text style={styles.textStyle}>{props.videoTitle}</Text>
+    <TouchableHighlight
+      onPress={() => {
+        props.onPress();
+      }}>
+      <View style={styles.mainContainer}>
+        <Image
+          style={styles.tinyLogo}
+          source={{
+            uri: props.videoImage,
+          }}
+        />
+        <View style={styles.textView}>
+          <Text style={styles.textStyle}>{props.videoTitle}</Text>
+        </View>
       </View>
-    </View>
+    </TouchableHighlight>
   );
 };
+
+ItemList.propTypes = {
+  videoImage: PropTypes.string,
+  videoTitle: PropTypes.string,
+  onPress: PropTypes.func,
+};
+
 const styles = StyleSheet.create({
   mainContainer: {
     margin: 10,

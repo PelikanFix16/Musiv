@@ -8,7 +8,6 @@ import ItemList from "../Components/ItemList";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
   faArrowLeft,
-  ź,
   faPause,
   faPlay,
   faArrowRight,
@@ -16,6 +15,7 @@ import {
 const MainScreen = () => {
   const [search, setSearch] = useState("");
   const [musicList, setMusicList] = useState([]);
+  const [videoUrl, setVideoUrl] = useState("");
   console.log("test");
   const searchHandle = (text) => {
     setSearch(text);
@@ -25,6 +25,9 @@ const MainScreen = () => {
     const videoList = await ParseToVideoList(j);
     setMusicList(videoList);
     console.log(musicList);
+  };
+  const selectedMusic = (url) => {
+    console.log(url);
   };
 
   return (
@@ -58,6 +61,9 @@ const MainScreen = () => {
               key={item.id}
               videoTitle={item.videoTitle}
               videoImage={item.videoImage}
+              onPress={() => {
+                selectedMusic(item.videoUrl);
+              }}
             />
           );
         })}
