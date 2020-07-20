@@ -1,8 +1,13 @@
-const GetMusicListApi = async (url) => {
+const GetMusicListApi = async (url, format) => {
   try {
     let response = await fetch(url);
-    let json = await response.json();
-    return json;
+    let output;
+    if (format == 0) {
+      output = await response.json();
+    } else {
+      output = await response.text();
+    }
+    return output;
   } catch (error) {
     console.error(error);
   }
