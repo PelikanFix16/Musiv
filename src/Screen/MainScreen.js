@@ -1,17 +1,18 @@
 import React, { useState } from "react";
-import {
-  View,
-  StyleSheet,
-  ScrollView,
-  TouchableHighlight,
-  Text,
-} from "react-native";
+import { View, StyleSheet, ScrollView, TouchableHighlight } from "react-native";
 import SearchInput from "../Components/searchInput";
 import GetMusicListApi from "../Web/getMusicList";
 import ParseToVideoList from "../Web/parseToVideoList";
 import GetUrlApi from "../consts/GetYoutubeApiUrl";
 import ItemList from "../Components/ItemList";
-
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import {
+  faArrowLeft,
+  ź,
+  faPause,
+  faPlay,
+  faArrowRight,
+} from "@fortawesome/free-solid-svg-icons";
 const MainScreen = () => {
   const [search, setSearch] = useState("");
   const [musicList, setMusicList] = useState([]);
@@ -32,7 +33,23 @@ const MainScreen = () => {
         <SearchInput submit={submit} searchHandle={searchHandle} />
       </View>
       <View style={styles.playerContainer}>
-        <TouchableHighlight></TouchableHighlight>
+        <TouchableHighlight>
+          <FontAwesomeIcon
+            style={styles.styleIcon}
+            size={28}
+            icon={faArrowLeft}
+          />
+        </TouchableHighlight>
+        <TouchableHighlight>
+          <FontAwesomeIcon style={styles.styleIcon} size={28} icon={faPause} />
+        </TouchableHighlight>
+        <TouchableHighlight>
+          <FontAwesomeIcon
+            style={styles.styleIcon}
+            icon={faArrowRight}
+            size={28}
+          />
+        </TouchableHighlight>
       </View>
       <ScrollView>
         {musicList.map((item) => {
@@ -58,9 +75,17 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     justifyContent: "center",
+    marginBottom: 50,
   },
   buttonTitle: {
     fontSize: 24,
+  },
+  styleIcon: {
+    color: "white",
+    margin: 10,
+  },
+  buttons: {
+    marginBottom: 20,
   },
 });
 

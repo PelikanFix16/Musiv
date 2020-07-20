@@ -11,9 +11,13 @@
     "format": "prettier --check ."
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.30",
+    "@fortawesome/free-solid-svg-icons": "^5.14.0",
+    "@fortawesome/react-native-fontawesome": "^0.2.5",
     "react": "16.13.1",
     "react-native": "0.63.1",
-    "react-native-config": "^1.3.1"
+    "react-native-config": "^1.3.1",
+    "react-native-svg": "^12.1.0"
   },
   "devDependencies": {
     "@babel/core": "7.10.5",
