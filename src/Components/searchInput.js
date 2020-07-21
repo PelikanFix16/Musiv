@@ -8,7 +8,7 @@ const SearchInput = (props) => {
       <TextInput
         style={styles.textInput}
         placeholder="Search Music"
-        placeholderTextColor="white"
+        placeholderTextColor="#9575cd"
         onChangeText={props.searchHandle}
         onSubmitEditing={props.submit}
       />
@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
   },
   textInput: {
     width: "100%",
-    color: "white",
+    color: "#9575cd",
     textAlign: "center",
     fontSize: 16,
   },

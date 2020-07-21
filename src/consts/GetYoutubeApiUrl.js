@@ -4,7 +4,7 @@ const GetUrlApi = (search) => {
   return (
     "https://www.googleapis.com/youtube/v3/search?q=" +
     search +
-    "&maxResults=50&key=" +
+    "&maxResults=20&key=" +
     Config.YOUTUBE_API_KEY
   );
 };

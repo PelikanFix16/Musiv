@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, ScrollView, Text } from "react-native";
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  Text,
+  ActivityIndicator,
+  ToastAndroid,
+} from "react-native";
 import SearchInput from "../Components/searchInput";
 import GetMusicListApi from "../Web/getMusicList";
 import ParseToVideoList from "../Web/parseToVideoList";
@@ -23,18 +30,25 @@ const MainScreen = () => {
   const [musicList, setMusicList] = useState([]);
   const [iconCurrent, setIconCurrent] = useState(faPause);
   const [currentTrack, setCurrentTrack] = useState("");
+  const [loading, setLoading] = useState(0);
   console.log("test");
   const searchHandle = (text) => {
     setSearch(text);
   };
   const submit = async () => {
+    setLoading(1);
     const j = await GetMusicListApi(GetUrlApi(search), 0);
     const videoList = await ParseToVideoList(j);
     setMusicList(videoList);
-    console.log(musicList);
+    setLoading(0);
   };
   const selectedMusic = async (url, image, title, id) => {
     try {
+      ToastAndroid.showWithGravity(
+        "Start Playing Music",
+        ToastAndroid.SHORT,
+        ToastAndroid.TOP,
+      );
       await TrackPlayer.add([]);
       await TrackPlayer.reset();
       const track = await CreateTrack(id, url, title, image);
@@ -120,25 +134,31 @@ const MainScreen = () => {
       <View style={styles.currentTrackView}>
         <Text style={styles.currentText}>{currentTrack}</Text>
       </View>
-      <ScrollView>
-        {musicList.map((item) => {
-          return (
-            <ItemList
-              key={item.id}
-              videoTitle={item.videoTitle}
-              videoImage={item.videoImage}
-              onPress={() => {
-                selectedMusic(
-                  item.videoUrl,
-                  item.videoImage,
-                  item.videoTitle,
-                  item.id,
-                );
-              }}
-            />
-          );
-        })}
-      </ScrollView>
+      <View style={styles.listView}>
+        {loading ? (
+          <ActivityIndicator size="large" color="#00ff00" />
+        ) : (
+          <ScrollView>
+            {musicList.map((item) => {
+              return (
+                <ItemList
+                  key={item.id}
+                  videoTitle={item.videoTitle}
+                  videoImage={item.videoImage}
+                  onPress={() => {
+                    selectedMusic(
+                      item.videoUrl,
+                      item.videoImage,
+                      item.videoTitle,
+                      item.id,
+                    );
+                  }}
+                />
+              );
+            })}
+          </ScrollView>
+        )}
+      </View>
     </View>
   );
 };
@@ -177,6 +197,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     textAlign: "center",
     fontWeight: "bold",
+  },
+  listView: {
+    width: "100%",
+    height: "100%",
   },
 });
 
