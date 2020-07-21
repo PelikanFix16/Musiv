@@ -5,7 +5,15 @@ import PropTypes from "prop-types";
 
 const TouchableIcon = (props) => {
   return (
-    <TouchableHighlight>
+    <TouchableHighlight
+      style={styles.touchStyle}
+      onPress={() => {
+        try {
+          props.onPress();
+        } catch (error) {
+          console.log(error);
+        }
+      }}>
       <FontAwesomeIcon style={styles.styleIcon} size={28} icon={props.icon} />
     </TouchableHighlight>
   );
@@ -13,12 +21,17 @@ const TouchableIcon = (props) => {
 
 TouchableIcon.propTypes = {
   icon: PropTypes.object,
+  onPress: PropTypes.func,
 };
 
 const styles = StyleSheet.create({
   styleIcon: {
-    color: "white",
+    color: "#9575cd",
     margin: 10,
+  },
+  touchStyle: {
+    width: 50,
+    height: 50,
   },
 });
 

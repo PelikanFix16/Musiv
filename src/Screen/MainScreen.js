@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
+import { View, StyleSheet, ScrollView, Text } from "react-native";
 import SearchInput from "../Components/searchInput";
 import GetMusicListApi from "../Web/getMusicList";
 import ParseToVideoList from "../Web/parseToVideoList";
@@ -11,15 +11,18 @@ import {
   faArrowLeft,
   faPause,
   faArrowRight,
+  faPlay,
 } from "@fortawesome/free-solid-svg-icons";
 import ProgressBar from "../Components/ProgressBar";
 import GetNextSong from "../Web/getNextSong";
 import TouchableIcon from "../Components/TouchableIcon";
 import CreateTrack from "../Player/CreateTrack";
+import Previous from "../Player/Previous";
 const MainScreen = () => {
   const [search, setSearch] = useState("");
   const [musicList, setMusicList] = useState([]);
-
+  const [iconCurrent, setIconCurrent] = useState(faPause);
+  const [currentTrack, setCurrentTrack] = useState("");
   console.log("test");
   const searchHandle = (text) => {
     setSearch(text);
@@ -44,12 +47,57 @@ const MainScreen = () => {
       );
       await TrackPlayer.add([track, track2]);
       await TrackPlayer.play();
-      let tracks = await TrackPlayer.getQueue();
-      console.log(tracks);
+      setIconCurrent(faPause);
     } catch (error) {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    TrackPlayer.addEventListener("playback-track-changed", async (data) => {
+      try {
+        let tracks = await TrackPlayer.getQueue();
+        let last_track = tracks[tracks.length - 1].id;
+        let current_track = data.nextTrack;
+        let trackObject = await TrackPlayer.getTrack(data.nextTrack);
+        setCurrentTrack(trackObject.title);
+        if (current_track == last_track) {
+          const nextSong = await GetNextSong(last_track);
+          const track = await CreateTrack(
+            nextSong.id,
+            nextSong.videoUrl,
+            nextSong.videoTitle,
+            nextSong.videoImage,
+          );
+          tracks.push(track);
+          await TrackPlayer.add(track);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    });
+  }, []);
+
+  const setPause = () => {
+    if (iconCurrent == faPause) {
+      TrackPlayer.pause();
+      setIconCurrent(faPlay);
+    } else {
+      TrackPlayer.play();
+      setIconCurrent(faPause);
+    }
+  };
+
+  useEffect(() => {
+    TrackPlayer.addEventListener("remote-pause", () => {
+      TrackPlayer.pause();
+      setIconCurrent(faPlay);
+    });
+    TrackPlayer.addEventListener("remote-play", () => {
+      TrackPlayer.play();
+      setIconCurrent(faPause);
+    });
+  }, []);
 
   return (
     <View style={styles.mainContainer}>
@@ -57,12 +105,20 @@ const MainScreen = () => {
         <SearchInput submit={submit} searchHandle={searchHandle} />
       </View>
       <View style={styles.playerContainer}>
-        <TouchableIcon icon={faArrowLeft} />
-        <TouchableIcon icon={faPause} />
-        <TouchableIcon icon={faArrowRight} />
+        <TouchableIcon
+          icon={faArrowLeft}
+          onPress={async () => {
+            await Previous();
+          }}
+        />
+        <TouchableIcon icon={iconCurrent} onPress={setPause} />
+        <TouchableIcon icon={faArrowRight} onPress={TrackPlayer.skipToNext} />
       </View>
       <View style={styles.progressBarView}>
         <ProgressBar />
+      </View>
+      <View style={styles.currentTrackView}>
+        <Text style={styles.currentText}>{currentTrack}</Text>
       </View>
       <ScrollView>
         {musicList.map((item) => {
@@ -108,6 +164,19 @@ const styles = StyleSheet.create({
     width: "100%",
     justifyContent: "center",
     alignItems: "center",
+  },
+  currentTrackView: {
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  currentText: {
+    color: "#b39ddb",
+    justifyContent: "center",
+    alignItems: "center",
+    textAlign: "center",
+    fontWeight: "bold",
   },
 });
 
