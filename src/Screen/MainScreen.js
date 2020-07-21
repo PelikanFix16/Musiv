@@ -14,6 +14,7 @@ import {
   faPause,
   faArrowRight,
 } from "@fortawesome/free-solid-svg-icons";
+import ProgressBar from "../Components/ProgressBar";
 const MainScreen = () => {
   const [search, setSearch] = useState("");
   const [musicList, setMusicList] = useState([]);
@@ -99,6 +100,9 @@ const MainScreen = () => {
           />
         </TouchableHighlight>
       </View>
+      <View style={styles.progressBarView}>
+        <ProgressBar />
+      </View>
       <ScrollView>
         {musicList.map((item) => {
           return (
@@ -142,6 +146,11 @@ const styles = StyleSheet.create({
   },
   buttons: {
     marginBottom: 20,
+  },
+  progressBarView: {
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 
