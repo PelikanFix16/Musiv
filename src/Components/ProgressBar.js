@@ -27,6 +27,7 @@ const ProgressBar = () => {
         await TrackPlayer.seekTo(value);
         await TrackPlayer.play();
         setIsSeeking(false);
+        setSeek(value);
       }}
     />
   );
