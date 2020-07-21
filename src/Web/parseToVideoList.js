@@ -1,4 +1,5 @@
 import GetMusicListApi from "./getMusicList";
+import ParseTitleFromHtml from "./parseTitleFromHtml";
 
 const getList = (json) => {
   let vId = [];
@@ -23,13 +24,10 @@ const createThubnailsList = (list) => {
 };
 
 const titleFromWeb = async (item) => {
-  let re = /<title>(.*)<\/title>/gm;
-
   const link = "https://www.youtube.com/watch?v=" + item;
   const response = await GetMusicListApi(link, 1);
 
-  let t = re.exec(response);
-  return t;
+  return ParseTitleFromHtml(response);
 };
 
 const getTitles = async (list) => {
@@ -37,15 +35,7 @@ const getTitles = async (list) => {
 
   const res = await Promise.all(
     list.map(async (i) => {
-      let ressponse = await titleFromWeb(i);
-
-      return ressponse[1]
-        .replace("&quot;", '"')
-        .replace(" - YouTube", "")
-        .replace("&quot;", '"')
-        .replace("&#39;", "'")
-        .replace("&#39;", "'")
-        .replace("&amp;", "&");
+      return await titleFromWeb(i);
     }),
   );
   return res;

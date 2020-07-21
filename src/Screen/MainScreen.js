@@ -12,7 +12,6 @@ import ytdl from "react-native-ytdl";
 import {
   faArrowLeft,
   faPause,
-  faPlay,
   faArrowRight,
 } from "@fortawesome/free-solid-svg-icons";
 const MainScreen = () => {
