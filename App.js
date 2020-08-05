@@ -5,10 +5,14 @@ import UseEffectHellper from "./src/Effects/useEffectHelper";
 import InitializePlayer from "./src/Player/InitializePlayer";
 import SetPlayerOptions from "./src/Player/SetPlayerOptions";
 const App = () => {
-  UseEffectHellper(async () => {
-    await InitializePlayer();
-    SetPlayerOptions();
-  });
+  UseEffectHellper(
+    async () => {
+      await InitializePlayer();
+      SetPlayerOptions();
+    },
+    [],
+    true,
+  );
 
   return (
     <View style={styles.screen}>

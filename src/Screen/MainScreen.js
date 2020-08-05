@@ -5,12 +5,8 @@ import {
   ScrollView,
   Text,
   ActivityIndicator,
-  ToastAndroid,
 } from "react-native";
 import SearchInput from "../Components/searchInput";
-import GetMusicListApi from "../Web/getMusicList";
-import ParseToVideoList from "../Web/parseToVideoList";
-import GetUrlApi from "../consts/GetYoutubeApiUrl";
 import ItemList from "../Components/ItemList";
 import TrackPlayer from "react-native-track-player";
 
@@ -21,76 +17,27 @@ import {
   faPlay,
 } from "@fortawesome/free-solid-svg-icons";
 import ProgressBar from "../Components/ProgressBar";
-import GetNextSong from "../Web/getNextSong";
 import TouchableIcon from "../Components/TouchableIcon";
-import CreateTrack from "../Player/CreateTrack";
 import Previous from "../Player/Previous";
+import SubmitEventSearch from "../Events/SubmitEventSearch";
+import SelectMusicEvent from "../Events/SelectMusicEvent";
+import UseEffectHellper from "../Effects/useEffectHelper";
+import TrackChangeEvent from "../Events/TrackChangeEvent";
 const MainScreen = () => {
   const [search, setSearch] = useState("");
   const [musicList, setMusicList] = useState([]);
   const [iconCurrent, setIconCurrent] = useState(faPause);
   const [currentTrack, setCurrentTrack] = useState("");
   const [loading, setLoading] = useState(0);
-  console.log("test");
-  const searchHandle = (text) => {
-    setSearch(text);
-  };
+
   const submit = async () => {
-    setLoading(1);
-    const j = await GetMusicListApi(GetUrlApi(search), 0);
-    const videoList = await ParseToVideoList(j);
-    setMusicList(videoList);
-    setLoading(0);
+    await SubmitEventSearch(setLoading, setMusicList, search);
   };
   const selectedMusic = async (url, image, title, id) => {
-    try {
-      ToastAndroid.showWithGravity(
-        "Start Playing Music",
-        ToastAndroid.SHORT,
-        ToastAndroid.TOP,
-      );
-      await TrackPlayer.add([]);
-      await TrackPlayer.reset();
-      const track = await CreateTrack(id, url, title, image);
-      const nextSong = await GetNextSong(id);
-      const track2 = await CreateTrack(
-        nextSong.id,
-        nextSong.videoUrl,
-        nextSong.videoTitle,
-        nextSong.videoImage,
-      );
-      await TrackPlayer.add([track, track2]);
-      await TrackPlayer.play();
-      setIconCurrent(faPause);
-    } catch (error) {
-      console.log(error);
-    }
+    await SelectMusicEvent(url, image, title, id, setIconCurrent);
   };
 
-  useEffect(() => {
-    TrackPlayer.addEventListener("playback-track-changed", async (data) => {
-      try {
-        let tracks = await TrackPlayer.getQueue();
-        let last_track = tracks[tracks.length - 1].id;
-        let current_track = data.nextTrack;
-        let trackObject = await TrackPlayer.getTrack(data.nextTrack);
-        setCurrentTrack(trackObject.title);
-        if (current_track == last_track) {
-          const nextSong = await GetNextSong(last_track);
-          const track = await CreateTrack(
-            nextSong.id,
-            nextSong.videoUrl,
-            nextSong.videoTitle,
-            nextSong.videoImage,
-          );
-          tracks.push(track);
-          await TrackPlayer.add(track);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    });
-  }, []);
+  UseEffectHellper(() => TrackChangeEvent(setCurrentTrack));
 
   const setPause = () => {
     if (iconCurrent == faPause) {
@@ -116,7 +63,7 @@ const MainScreen = () => {
   return (
     <View style={styles.mainContainer}>
       <View style={styles.mainContainerInput}>
-        <SearchInput submit={submit} searchHandle={searchHandle} />
+        <SearchInput submit={submit} searchHandle={setSearch} />
       </View>
       <View style={styles.playerContainer}>
         <TouchableIcon
